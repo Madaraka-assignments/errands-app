@@ -23,7 +23,7 @@ export default function Home() {
   {isError && <p>Failed to load tasks</p>}
 
       
-  {!isLoading && !isError && data ?
+  {!isLoading && !isError && data?.tasks && data.tasks.length > 0 ?
     <div className="flex min-h-svh w-full  p-6 md:p-10">
     <div className="w-full max-w-ld">
       
