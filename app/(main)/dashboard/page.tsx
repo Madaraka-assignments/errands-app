@@ -22,19 +22,9 @@ export default function Home() {
 
   {isError && <p>Failed to load tasks</p>}
 
-      
-  {!isLoading && !isError && data?.tasks && data.tasks.length > 0 ?
-    <div className="flex min-h-svh w-full  p-6 md:p-10">
-    <div className="w-full max-w-ld">
-      
-    <CreateTaskModal/>
-  </div>
-  </div>
-
-  :
 
       <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-xl">
                 <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create a new request</CardTitle>
@@ -49,7 +39,6 @@ export default function Home() {
         </Card>
         </div>
       </div>
-  }
 
 </div>      
     

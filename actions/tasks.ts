@@ -1,15 +1,16 @@
 'use server';
-import { createTaskSchema } from "@/form-schemas/tasks";
 import { getSession, getUserFromSession } from "@/lib/session-manager";
 import { TaskRequest, TaskResponse } from "@/types/tasks";
 
 const appBaseUrl = process.env.API_BASE_URL 
-export async function createTaskAction(data: TaskRequest) {
+interface TaskReq {
+    tasks: TaskRequest[];
+}
+export async function createTaskAction(data: TaskReq) {
     const session = await getSession()
     if (!session) {
       throw new Error('Unauthorized');
     }
-  const validatedData = createTaskSchema.parse(data);
     // get customer Id from cookies   
   const customerId = await getUserFromSession().then(user => user);
   console.log('customerId',customerId)
@@ -20,7 +21,7 @@ export async function createTaskAction(data: TaskRequest) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${session.access_token}`,
     },
-    body: JSON.stringify(validatedData),
+    body: JSON.stringify(data),
     cache: 'no-store',
   });
 
