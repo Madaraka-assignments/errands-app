@@ -19,8 +19,9 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { loginSchema, LoginSchema } from "@/form-schemas/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { EyeIcon, EyeOffIcon } from "lucide-react"
+import { EyeIcon, EyeOffIcon, Loader } from "lucide-react"
 import Link from "next/link"
+import { useLogin } from "@/hooks/auth"
 
 export function LoginForm({
   className,
@@ -36,6 +37,24 @@ export function LoginForm({
     } = useForm<LoginSchema>({
       resolver: zodResolver(loginSchema),
     })
+
+    const { mutate:loginRequest, isPending } = useLogin()
+      const onSubmit = (data: LoginSchema) => {
+        loginRequest({
+          email: data.email,
+          password: data.password,
+        }, {
+          onError: (error: any) => {
+            if (error.response?.data?.errors) {
+              Object.entries(error.response.data.errors).forEach(([field, message]) => {
+                setError(field as keyof LoginSchema, {
+                  message: message as string,
+                })
+              })
+            }
+          }
+        })
+      }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -46,7 +65,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -85,7 +104,13 @@ export function LoginForm({
                  }
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button 
+                disabled={isPending}
+                type="submit">
+                  {isPending ? 
+                  <Loader className="w-5 h-5 animate-spin" />
+                   : 'Login'}
+                </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link href="/signup">Sign up</Link>
                 </FieldDescription>

@@ -19,8 +19,9 @@ import { useForm } from "react-hook-form"
 import { registerSchema, RegisterSchema } from "@/form-schemas/auth"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { EyeIcon, EyeOffIcon } from "lucide-react"
+import { EyeIcon, EyeOffIcon, Loader } from "lucide-react"
 import Link from "next/link"
+import { useRegister } from "@/hooks/auth"
 
 export function SignupForm({
   className,
@@ -36,6 +37,29 @@ export function SignupForm({
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
   })
+
+  const { mutate:registerRequest, isPending } = useRegister()
+
+  const onSubmit = (data: RegisterSchema) => {
+    registerRequest({
+      first_name: data.first_name,
+      last_name: data.last_name,
+      phone_number: data.phone_number,
+      email: data.email,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+    }, {
+      onError: (error: any) => {
+        if (error.response?.data?.errors) {
+          Object.entries(error.response.data.errors).forEach(([field, message]) => {
+            setError(field as keyof RegisterSchema, {
+              message: message as string,
+            })
+          })
+        }
+      }
+    })
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -46,7 +70,7 @@ export function SignupForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="first_name">First Name</FieldLabel>
@@ -155,7 +179,13 @@ export function SignupForm({
                 </Field>
               </Field>
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button 
+                  disabled={isPending}
+                type="submit">
+                  {isPending ? 
+                  <Loader className="w-5 h-5 animate-spin" />
+                   : 'Create Account'}
+                </Button>
                 <FieldDescription className="text-center">
                   Already have an account? <Link href="/login">Sign in</Link>
                 </FieldDescription>
