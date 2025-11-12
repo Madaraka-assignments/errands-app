@@ -18,7 +18,7 @@ export function CreateTaskModal() {
     <Dialog open={open} onOpenChange={setOpen}>
       <form>
         <DialogTrigger asChild>
-          <Button variant="default">Create task</Button>
+          <Button variant="default">Create another task</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

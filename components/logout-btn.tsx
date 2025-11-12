@@ -1,9 +1,21 @@
-import React from 'react'
+import { logoutUser } from '@/actions/auth'
+import { Button } from './ui/button'
+import { LogOut } from 'lucide-react'
 
-const logoutButton = () => {
+const LogoutButton = () => {
+
   return (
-    <div>logoutButton</div>
+    <form action={logoutUser}>
+    <Button
+    className='cursor-pointer'
+        variant="ghost"
+        type='submit'
+    >
+        <LogOut/>
+        Log out
+    </Button>
+    </form>
   )
 }
 
-export default logoutButton
+export default LogoutButton

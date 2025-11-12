@@ -3,6 +3,7 @@
 import { loginSchema, registerSchema } from '@/form-schemas/auth';
 import { clearSession, createSession, storeRegisterUser } from '@/lib/session-manager';
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
+import { redirect } from 'next/navigation';
 
 
 const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -55,5 +56,5 @@ export async function loginUser(data: LoginRequest) {
 
 export async function logoutUser() {
   await clearSession();
-  return;
+  redirect('/login');
 }
