@@ -1,9 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
 
-First, run the development server:
+## How to run the application locally
 
+
+First, run the clone the repository:
+```
+git clone https://github.com/Madaraka-assignments/errands-app.git
+```
+
+
+Second, navigate to the directory:
+```
+cd errands-app
+```
+
+Third, install the dependencies:
+```
+pnpm install
+```
+or
+```
+yarn install
+```
+or
+```
+npm install
+```
+
+
+Fourth, set the environment variables:
+
+#### Create .env file
+Create a .env file in the root directory of the project and add the following content:
+
+```
+SESSION_SECRET=TDGASYRG33Q72YR7WEEWB
+API_BASE_URL=api_base_url
+NEXT_PUBLIC_APP_URL=localhost_app_url eg http://localhost:3000
+```
+
+Fifth, run the development server:
 ```bash
 npm run dev
 # or
@@ -14,23 +50,34 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architectural design notes
+    
+    - The application is built using Next.js and React and typescript as per the requirements.
+    - The styling is done using Tailwind CSS and shadcn UI components.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    #### Authentication
+    - The session is stored in cookies and is encrypted using the provided secret key.
+    - The user information is stored in cookies and is encrypted using the provided secret key.
+    - Login and registration are handled using the provided API proxied through the application api folder to add a security layer on top of the API and avoid exposing sensitive access tokens on the network tab of the browser.
 
-## Learn More
+    #### Access Control
+    - The application uses the Next.js middleware(proxy.ts) to handle access control and authentication.
+    - The middleware checks if the user is authenticated before accessing the protected routes.
+    - If the user is not authenticated, the middleware redirects the user to the login page.
 
-To learn more about Next.js, take a look at the following resources:
+    #### Data Fetching and creating tasks
+    - The application uses the useQuery hook from the Tanstack Query library to fetch data from the API.
+    - The useMutation hook from the Tanstack Query library is used to create tasks.
+    - All post requests are made using the fetch API and Next.js's server actions. This ensures that the requests are handled by the server and makes it easier to access the cookies and session information which was previously stored in server cookies. The decision to use server side actions was mainly because the client side could not access the cookies and session information easily.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### Assumptions
+   - The main assumption made in the application is that in the completed api there will be an endpoint for fetching task types so I created a select dropdown for the task type.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Vercel link
+    
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[Vercel Platform](https://errands-app-jade.vercel.app)
