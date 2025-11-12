@@ -14,11 +14,27 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { loginSchema, LoginSchema } from "@/form-schemas/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { EyeIcon, EyeOffIcon } from "lucide-react"
+import Link from "next/link"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+    const [showPassword, setShowPassword] = useState(false)
+      const {
+      register,
+      handleSubmit,
+      formState: { errors },
+      setError,
+    } = useForm<LoginSchema>({
+      resolver: zodResolver(loginSchema),
+    })
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -36,29 +52,41 @@ export function LoginForm({
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
-                  required
+                  placeholder="jane@doe.com"
+                  {...register("email")}
                 />
+                {errors.email && 
+                      <FieldDescription className="text-red-500">
+                        {errors.email.message}
+                      </FieldDescription>
+                 }
               </Field>
               <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input id="password" type="password" required />
+                <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <div className="w-full flex flex-row items-center gap-2 shadow-sm rounded-sm border">
+                  <Input 
+                  placeholder='********'
+                  id="password" 
+                  type={showPassword ? "text" : "password"}  
+                  {...register("password")}
+                  className='flex-1 border-none bg-transparent shadow-none items-center justify-center flex' />
+                  <Button 
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  size='icon' variant="ghost" className='flex items-center justify-center'>
+                      {showPassword ? <EyeOffIcon className='w-5 h-5' /> : <EyeIcon className='w-5 h-5' />}
+                  </Button>
+                  </div>
+                    {errors.password && 
+                      <FieldDescription className="text-red-500">
+                        {errors.password.message}
+                      </FieldDescription>
+                 }
               </Field>
               <Field>
                 <Button type="submit">Login</Button>
-                <Button variant="outline" type="button">
-                  Login with Google
-                </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  Don&apos;t have an account? <Link href="/signup">Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
