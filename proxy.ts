@@ -14,7 +14,7 @@ export default async function proxy(req: NextRequest) {
   const cookie = (await cookies()).get('errand-session')?.value
   const session = await decrypt(cookie)
 
-  console.log('session in middleware',session)
+  console.log('session in middleware',cookie)
 
   if (isProtectedRoute && !session?.access_token) {
     return NextResponse.redirect(new URL('/login', req.nextUrl))

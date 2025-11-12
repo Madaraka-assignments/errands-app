@@ -40,6 +40,7 @@ export async function createSession(access_token: string, refresh_token:string) 
     sameSite: 'lax',
     path: '/',
   })
+  console.log('Session created')
 }
 
 

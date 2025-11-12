@@ -48,5 +48,6 @@ export async function loginUser(data: LoginRequest) {
   }
   
   const result: LoginResponse = await response.json();
+  await createSession(result.access, result.refresh);
   return result;
 }

@@ -11,7 +11,6 @@ export function useRegister() {
   return useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-        console.log('data', data);
       toast.success('Account created successfully!');
        queryClient.invalidateQueries({ queryKey: ['user'] });
       router.push('/login');
@@ -30,7 +29,6 @@ export function useLogin() {
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-        console.log('data', data);
       toast.success('Logged in successfully!');
        queryClient.invalidateQueries({ queryKey: ['user'] });
       router.push('/dashboard');
