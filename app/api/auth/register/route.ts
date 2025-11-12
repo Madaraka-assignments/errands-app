@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await createSession(data.access, data.refresh);
+    await createSession(data.access, data.refresh, data.user);
     return NextResponse.json(data);
   } catch (error: any) {
     return NextResponse.json(

@@ -6,15 +6,12 @@ import { decrypt } from './lib/session-manager'
 const publicRoutes = ['/login', '/signup', '/']
  
 export default async function proxy(req: NextRequest) {
-  console.log('proxy middleware called')
   const path = req.nextUrl.pathname
   const isProtectedRoute = path.startsWith('/dashboard')
   const isPublicRoute = publicRoutes.includes(path)
  
   const cookie = (await cookies()).get('errand-session')?.value
   const session = await decrypt(cookie)
-
-  console.log('session in middleware',cookie)
 
   if (isProtectedRoute && !session?.access_token) {
     return NextResponse.redirect(new URL('/login', req.nextUrl))
@@ -37,7 +34,6 @@ export default async function proxy(req: NextRequest) {
  
 export const config = {
   matcher: [
-    // Exclude API routes, static files, image optimizations, and .png files
     '/((?!api|_next/static|_next/image|.*\\.png$).*)',
   ],
 }

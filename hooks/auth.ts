@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { loginUser, registerUser } from '@/actions/auth';
+import {loginUser, registerUser } from '@/actions/auth';
+import { createTaskAction } from '@/actions/tasks';
 
 
 export function useRegister() {
@@ -11,6 +12,7 @@ export function useRegister() {
   return useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
+      console.log('data',data)
       toast.success('Account created successfully!');
        queryClient.invalidateQueries({ queryKey: ['user'] });
       router.push('/login');
@@ -36,6 +38,22 @@ export function useLogin() {
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to create account');
+    },
+  });
+}
+
+
+export function useCreateTask() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createTaskAction,
+    onSuccess: (data) => {
+      toast.success('Task created successfully!');
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to create task');
     },
   });
 }

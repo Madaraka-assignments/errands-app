@@ -1,7 +1,7 @@
 'use server';
 
 import { loginSchema, registerSchema } from '@/form-schemas/auth';
-import { createSession } from '@/lib/session-manager';
+import { clearSession, createSession, storeRegisterUser } from '@/lib/session-manager';
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
 
 
@@ -25,7 +25,7 @@ export async function registerUser(data: RegisterRequest) {
   }
   
   const result: RegisterResponse = await response.json();
-  
+  await storeRegisterUser(String(result.id));
   return result;
 }
 
@@ -48,6 +48,12 @@ export async function loginUser(data: LoginRequest) {
   }
   
   const result: LoginResponse = await response.json();
-  await createSession(result.access, result.refresh);
+  await createSession(result.access, result.refresh, result.user);
   return result;
+}
+
+
+export async function logoutUser() {
+  await clearSession();
+  return;
 }

@@ -2,6 +2,7 @@ import 'server-only'
 import { SignJWT, decodeJwt, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { SessionPayload } from '@/types/session'
+import { User } from '@/types/auth'
  
 const secretKey = process.env.SESSION_SECRET
 const encodedKey = new TextEncoder().encode(secretKey)
@@ -28,7 +29,7 @@ export async function decrypt(session: string | undefined = '') {
 
 
  
-export async function createSession(access_token: string, refresh_token:string) {
+export async function createSession(access_token: string, refresh_token:string, user:User) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   const session = await encrypt({ access_token, refresh_token, expiresAt })
   const cookieStore = await cookies()
@@ -40,9 +41,43 @@ export async function createSession(access_token: string, refresh_token:string) 
     sameSite: 'lax',
     path: '/',
   })
+  cookieStore.set('user-info', JSON.stringify(user), {
+    httpOnly: false,
+    secure: true,
+    expires: expiresAt,
+    sameSite: 'lax',
+    path: '/',
+  })
   console.log('Session created')
 }
 
+ 
+export async function storeRegisterUser(user:string) {
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  const cookieStore = await cookies()
+  cookieStore.set('user-info-reg', JSON.stringify(user), {
+    httpOnly: false,
+    secure: true,
+    expires: expiresAt,
+    sameSite: 'lax',
+    path: '/',
+  })
+  console.log('Session created')
+}
+
+export async function getUserFromSession() {
+  try {
+    const cookie = (await cookies()).get('user-info-reg')?.value
+
+    if (!cookie) return null
+
+    const user = JSON.parse(cookie) as string
+    return user
+  } catch (error) {
+    console.error('Failed to get user from session:', error)
+    return null
+  }
+}
 
 export async function updateSession() {
     const session = (await cookies()).get('errand-session')?.value
@@ -71,6 +106,11 @@ export async function getSession() {
     if (!session || !payload) {
       return null
     }
-   
-    return payload
+    return payload as SessionPayload
   }
+
+export async function clearSession() {
+  const cookieStore = await cookies()
+  cookieStore.delete('errand-session')
+  cookieStore.delete('user_info')
+}
