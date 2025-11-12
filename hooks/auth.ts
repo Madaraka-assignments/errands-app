@@ -29,6 +29,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
+      queryClient.setQueryData(['user'], data.user);
       toast.success('Logged in successfully!');
        queryClient.invalidateQueries({ queryKey: ['user'] });
       router.push('/dashboard');
